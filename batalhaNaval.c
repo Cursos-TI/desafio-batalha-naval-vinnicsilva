@@ -18,32 +18,35 @@ void exibirTabuleiro() {
 void aplicarHabilidade(int origemLinha, int origemColuna, int tamanho, char tipo) {
     int habilidade[tamanho][tamanho];
 
-    // Inicializa matriz de habilidade com 0
+    // Inicializa a matriz de habilidade com 0
     for (int i = 0; i < tamanho; i++) {
         for (int j = 0; j < tamanho; j++) {
             habilidade[i][j] = 0;
         }
     }
 
-    // Preenche a matriz de acordo com o tipo
+    int centro = tamanho / 2;
+
+    // Preenche a matriz de habilidade dinamicamente
     for (int i = 0; i < tamanho; i++) {
         for (int j = 0; j < tamanho; j++) {
-            int centro = tamanho / 2;
 
             if (tipo == 'C') {
-                // Cone apontando para baixo
-                if (i >= j - centro && i >= centro - j) {
+                // Cone: forma triangular com a ponta no topo expandindo para baixo
+                if (i >= 0 && i <= centro && j >= centro - i && j <= centro + i) {
                     habilidade[i][j] = 1;
                 }
-            } else if (tipo == '+') {
-                // Cruz
+            }
+            else if (tipo == '+') {
+                // Cruz: linha e coluna centrais
                 if (i == centro || j == centro) {
                     habilidade[i][j] = 1;
                 }
-            } else if (tipo == 'O') {
-                // Octaedro (losango) sem usar abs
-                int distLinha = i > centro ? i - centro : centro - i;
-                int distColuna = j > centro ? j - centro : centro - j;
+            }
+            else if (tipo == 'O') {
+                // Octaedro (losango)
+                int distLinha = (i > centro) ? i - centro : centro - i;
+                int distColuna = (j > centro) ? j - centro : centro - j;
                 if (distLinha + distColuna <= centro) {
                     habilidade[i][j] = 1;
                 }
@@ -51,11 +54,11 @@ void aplicarHabilidade(int origemLinha, int origemColuna, int tamanho, char tipo
         }
     }
 
-    // Sobrepõe a matriz da habilidade ao tabuleiro
+    // Sobrepor no tabuleiro
     for (int i = 0; i < tamanho; i++) {
         for (int j = 0; j < tamanho; j++) {
-            int linhaTab = origemLinha - tamanho / 2 + i;
-            int colTab = origemColuna - tamanho / 2 + j;
+            int linhaTab = origemLinha - centro + i;
+            int colTab = origemColuna - centro + j;
 
             if (linhaTab >= 0 && linhaTab < 10 && colTab >= 0 && colTab < 10) {
                 if (habilidade[i][j] == 1 && tabuleiro[linhaTab][colTab] == 0) {
@@ -74,9 +77,9 @@ int main() {
     tabuleiro[1][1] = 3;
 
     // Aplica habilidades em pontos fixos
-    aplicarHabilidade(4, 4, 5, 'C'); // Cone com origem em (4,4)
-    aplicarHabilidade(6, 6, 5, '+'); // Cruz com origem em (6,6)
-    aplicarHabilidade(3, 7, 5, 'O'); // Octaedro com origem em (3,7)
+    aplicarHabilidade(4, 4, 5, 'C');  // Cone com origem em (4,4)
+    aplicarHabilidade(6, 6, 5, '+');  // Cruz com origem em (6,6)
+    aplicarHabilidade(3, 7, 5, 'O');  // Octaedro com origem em (3,7)
 
     // Exibe o tabuleiro final
     exibirTabuleiro();
